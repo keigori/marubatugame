@@ -31,24 +31,48 @@ end
 
 #三つが一列に並んで、どちらが勝ったかを判定
 def intern(i,s,t)
-  row = Array.new(3)
-  line = Array.new(3)
+  @row = Array.new(3)
+  @line = Array.new(3)
   for a in 0..2 do
-    row[a] = @array[a][0]+@array[a][1]+@array[a][2]
-    line[a] = @array[0][a]+@array[1][a]+@array[2][a]
+    @row[a] = @array[a][0]+@array[a][1]+@array[a][2]
+    @line[a] = @array[0][a]+@array[1][a]+@array[2][a]
   end
     dia1 = @array[0][0]+@array[1][1]+@array[2][2]
     dia2 = @array[0][2]+@array[1][1]+@array[2][0]
 
 
-  if i == 1
-    m="○○○"
-  else
-    m="×××"
-  end
+ # if i == 1
+ #   m="○○○"
+ # else
+ #   m="×××"
+ # end
 
   k = 0
 
+  m = i.odd? ? '○○○' : '×××'
+  if check_row(s, m)
+    return i
+  end   
+  if check_column(t, m)
+    return i
+  end   
+  if s==1 && t==1 then
+    if check_dia(dia1,m)
+      return i
+    end  
+    if check_dia(dia2,m)
+      return i
+    end  
+  elsif s!=1 && t!=1 then
+    if check_dia(dia1,m)
+      return i
+    end  
+    if check_dia(dia2,m)
+      return i
+    end  
+  end
+
+=begin
   if s == 0 && t == 0 then
     if row[0] == m || line[0] == m || dia1 == m then
       k = i
@@ -86,9 +110,26 @@ def intern(i,s,t)
         k = i
     end
   end
-
+=end
 return k
 end
+
+
+# 指定された行(row)が、すべて(mark)になっているかどうかを調べる
+def check_row(row, mark)
+  @row[row] == mark
+end
+
+# 指定された行(column)が、すべて(mark)になっているかどうかを調べる
+def check_column(column, mark)
+  @line[column] == mark
+end
+
+# 四隅と真ん中の時、斜め(dia)がどうなっているかを調べる
+def check_dia(dia,mark)
+  dia == mark
+end 
+
 
 @array =
 [
