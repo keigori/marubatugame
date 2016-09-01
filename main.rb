@@ -29,39 +29,65 @@ def ban
   end
 end
 
-#三つが一列に並んでいるかを判定
-def jg 
-n = 0
-  for i in 0..2 do
-    if @array[i][0..1] == @array[i][1..2] || @array[0..1][i] == @array[1..2][i] then
-      n = win(1,i)
-      break
-    elsif (@array[0][0] == @array[1][1] && @array[1][1] == @array[2][2]) || 
-          (@array[0][2] == @array[1][1] && @array[1][1] == @array[2][0]) then    
-      n = win(2, i)
-      break
+#三つが一列に並んで、どちらが勝ったかを判定
+def intern(i,s,t)
+  row = Array.new(3)
+  line = Array.new(3)
+  for a in 0..2 do
+    row[a] = @array[a][0]+@array[a][1]+@array[a][2]
+    line[a] = @array[0][a]+@array[1][a]+@array[2][a]
+  end
+    dia1 = @array[0][0]+@array[1][1]+@array[2][2]
+    dia2 = @array[0][2]+@array[1][1]+@array[2][0]
+
+
+  if i == 1
+    m="○○○"
+  else
+    m="×××"
+  end
+
+  k = 0
+
+  if s == 0 && t == 0 then
+    if row[0] == m || line[0] == m || dia1 == m then
+      k = i
+    end
+  elsif s == 0 && t == 1 then
+    if row[0] == m || line[1] == m then
+        k = i
+    end
+  elsif s == 0 && t == 2 then
+    if row[0] == m || line[2] == m || dia2 == m then
+        k = i
+    end
+  elsif s == 1 && t == 0 then
+    if row[1] == m || line[0] == m then
+      k = i
+    end
+  elsif s == 1 && t == 1 then
+    if row[1] == m || line[1] == m || dia1 == m || dia2 == m then
+        k = i
+    end
+  elsif s == 1 && t == 2 then
+    if row[1] == m || line[2] == m then
+        k = i
+    end
+  elsif s == 2 && t == 0 then
+    if row[2] == m || line[0] == m || dia2 == m then
+      k = i
+    end
+  elsif s == 2 && t == 1 then
+    if row[2] == m || line[1] == m then
+        k = i
+    end
+  elsif s == 2 && t == 2 then
+    if row[2] == m || line[2] == m || dia1 == m then
+        k = i
     end
   end
-  return n
-end
 
-#どちらが勝ったかを判定
-def win(s,t) 
-  i = 0
-
-  if s == 1 && @array[t][t] == "○" then
-    i = 1
-  elsif s == 1 && @array[t][t] == "×" then
-    i = 2
-  end
-
-  if s == 2 && @array[1][1] == "○" then
-    i = 1
-  elsif s == 2 && @array[1][1] == "×" then
-    i = 2
-  end
-
-  return i
+return k
 end
 
 @array =
@@ -76,30 +102,32 @@ for turn in 1..9 do
 
   ban
 
-#入力をする
+  #入力をする
   puts "どこにしますか？"
   a,b = nyu
 
   while a<0 || a>2 || b<0 || b>2 || @array[a][b] == "○" || @array[a][b] == "×" do
-#ない盤面の指定エラー処理
+    #ない盤面の指定エラー処理
     if a<0||a>2||b<0||b>2 then
       a,b = error(1)
     end
 
-#すでに埋まっている盤面の指定エラー処理
+    #すでに埋まっている盤面の指定エラー処理
     if @array[a][b] == "○"||@array[a][b] == "×" then
       a,b = error(2)
     end
   end
 
-#プレイヤーの駒を入れる
+  #プレイヤーの駒を入れる
   if turn%2 == 1 then
     @array[a][b] = "○"
+    k = intern(1,a,b)
   elsif turn%2 == 0 then
     @array[a][b] = "×"
+    k = intern(2,a,b)
   end
 
-  k = jg
+  #勝敗が決まったらループからぬける
   if k == 1 || k == 2 then
     break
   end
