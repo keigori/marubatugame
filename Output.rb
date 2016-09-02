@@ -1,6 +1,5 @@
-
+#盤面を出力するクラス
 class Output
-  #盤面を出力するメソッド
   def ban (*banmen)
     3.times do |i| 
       3.times do |n|
