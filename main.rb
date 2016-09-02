@@ -1,11 +1,18 @@
+require "./Output.rb"
+require "./Input.rb"
+require "./Judge_win.rb"
+require "./Judge_error.rb"
 
+=begin
 #入力をするメソッド
 def nyu    
   a = gets.to_i
   b = gets.to_i
   return a,b
 end
+=end
 
+=begin
  #入力エラーの処理を行うメソッド
 def error(s)  
   if s == 1 then
@@ -17,7 +24,9 @@ def error(s)
   end
   return a,b
 end
+=end
 
+=begin
 #盤面を出力するメソッド
 def ban 
   for i in 0..2 do  
@@ -28,8 +37,9 @@ def ban
     puts ''
   end
 end
+=end
 
-#三つが一列に並んで、どちらが勝ったかを判定
+=begin
 def intern(i,s,t)
   @row = Array.new(3)
   @line = Array.new(3)
@@ -39,13 +49,6 @@ def intern(i,s,t)
   end
     dia1 = @array[0][0]+@array[1][1]+@array[2][2]
     dia2 = @array[0][2]+@array[1][1]+@array[2][0]
-
-
- # if i == 1
- #   m="○○○"
- # else
- #   m="×××"
- # end
 
   k = 0
 
@@ -71,50 +74,11 @@ def intern(i,s,t)
       return i
     end  
   end
+  return k
+end
+=end
 
 =begin
-  if s == 0 && t == 0 then
-    if row[0] == m || line[0] == m || dia1 == m then
-      k = i
-    end
-  elsif s == 0 && t == 1 then
-    if row[0] == m || line[1] == m then
-        k = i
-    end
-  elsif s == 0 && t == 2 then
-    if row[0] == m || line[2] == m || dia2 == m then
-        k = i
-    end
-  elsif s == 1 && t == 0 then
-    if row[1] == m || line[0] == m then
-      k = i
-    end
-  elsif s == 1 && t == 1 then
-    if row[1] == m || line[1] == m || dia1 == m || dia2 == m then
-        k = i
-    end
-  elsif s == 1 && t == 2 then
-    if row[1] == m || line[2] == m then
-        k = i
-    end
-  elsif s == 2 && t == 0 then
-    if row[2] == m || line[0] == m || dia2 == m then
-      k = i
-    end
-  elsif s == 2 && t == 1 then
-    if row[2] == m || line[1] == m then
-        k = i
-    end
-  elsif s == 2 && t == 2 then
-    if row[2] == m || line[2] == m || dia1 == m then
-        k = i
-    end
-  end
-=end
-return k
-end
-
-
 # 指定された行(row)が、すべて(mark)になっているかどうかを調べる
 def check_row(row, mark)
   @row[row] == mark
@@ -129,9 +93,14 @@ end
 def check_dia(dia,mark)
   dia == mark
 end 
+=end
 
 
-@array =
+ot = Output.new
+it = Input.new
+jwin = Judge_win.new
+jer = Judge_error.new
+$array =
 [
     ["□","□","□"],
     ["□","□","□"],
@@ -141,31 +110,31 @@ end
 #ターン数を数える
 for turn in 1..9 do
 
-  ban
+  ot.ban
 
   #入力をする
   puts "どこにしますか？"
-  a,b = nyu
+  a,b = it.nyu
 
-  while a<0 || a>2 || b<0 || b>2 || @array[a][b] == "○" || @array[a][b] == "×" do
+  while a<0 || a>2 || b<0 || b>2 || $array[a][b] == "○" || $array[a][b] == "×" do
     #ない盤面の指定エラー処理
     if a<0||a>2||b<0||b>2 then
-      a,b = error(1)
+      a,b = jer.error(1)
     end
 
     #すでに埋まっている盤面の指定エラー処理
-    if @array[a][b] == "○"||@array[a][b] == "×" then
-      a,b = error(2)
+    if $array[a][b] == "○"||$array[a][b] == "×" then
+      a,b = jer.error(2)
     end
   end
 
   #プレイヤーの駒を入れる
   if turn%2 == 1 then
-    @array[a][b] = "○"
-    k = intern(1,a,b)
+    $array[a][b] = "○"
+    k = jwin.intern(1,a,b)
   elsif turn%2 == 0 then
-    @array[a][b] = "×"
-    k = intern(2,a,b)
+    $array[a][b] = "×"
+    k = jwin.intern(2,a,b)
   end
 
   #勝敗が決まったらループからぬける
@@ -175,7 +144,7 @@ for turn in 1..9 do
 
 end
 
-ban
+ot.ban
 
 if k == 1 then
   puts "先攻の勝利です"
